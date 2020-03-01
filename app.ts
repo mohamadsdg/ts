@@ -1,32 +1,29 @@
-// const person: {
-//   name: string;
-//   age: number;
-//   hobbies: string[];
-//   role: [number, string];
-// } = {
-//   name: "sdg",
-//   age: 26,
-//   hobbies: ["sport", "game"],
-//   role: [1, "author"]
-// };
-enum Role {
-  ADMIN,
-  AUTHOR,
-  READ_ONLY
+function combine(
+  input1: number | string,
+  input2: number | string,
+  conversion: "as-number" | "as-text"
+) {
+  let result;
+  if (
+    (typeof input1 == "number" && typeof input2 == "number") ||
+    conversion == "as-number"
+  ) {
+    result = +input1 + +input2;
+  } else {
+    result = input1.toString() + " " + input2 + toString();
+  }
+  return result;
 }
-const person = {
-  name: "sdg",
-  age: 26,
-  hobbies: ["sport", "game"],
-  role: Role[0]
-};
-// person.role.push("sdsds");
-// person.role[0] = "admin";
-console.log(person.role, Role);
 
-let favoritActivites: string[];
-favoritActivites = ["sport"];
+let combineNumber = combine(20, 30, "as-number");
+console.log(combineNumber);
 
-for (const hobby of person.hobbies) {
-  console.log(hobby);
-}
+let combineString = combine(
+  "Mamrez",
+  "sometimes he work's in office",
+  "as-text"
+);
+console.log(combineString);
+
+let combineNumberString = combine("30", "50", "as-number");
+console.log(combineNumberString);
