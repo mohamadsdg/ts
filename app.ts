@@ -1,20 +1,19 @@
-function add(n1: number, n2: number): number {
-  return n1 + n2;
-}
-function printResult(num: number): void {
-  console.log(num);
-}
-function addAndHandle(n1: number, n2: number, cb: (r1: number) => void) {
-  const result = n1 + n2;
-  cb(result);
+let userInput: unknown;
+let userName: string;
+
+userInput = 5;
+userInput = "sdg";
+
+if (typeof userInput === "string") {
+  userName = userInput;
 }
 
-// let combineValue: (a: number, b: number) => number;
-// printResult(add(5, 12));
-// combineValue = add;
-// combineValue = printResult;
-// console.log(combineValue(8, 8));
+function error(message: string): never {
+  throw { message, errorCode: 500 };
+}
+function fail() {
+  return error("Something failed");
+}
 
-addAndHandle(6, 8, result => {
-  console.log(result);
-});
+// console.log(userName);
+fail();
