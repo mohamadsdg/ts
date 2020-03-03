@@ -20,7 +20,6 @@ class Department {
     console.log(this.employees);
   }
 }
-
 class ITDepartment extends Department {
   admins: string[];
   constructor(id: string, admins: string[]) {
@@ -28,11 +27,21 @@ class ITDepartment extends Department {
     this.admins = admins;
   }
 }
-
 class AccountingDepartment extends Department {
+  private lastReport: string;
+
   constructor(id: string, private reports: string[]) {
     super(id, "Accounting-Department");
+    this.lastReport = reports[reports.length];
   }
+  get mostLastRepost() {
+    if (this.lastReport) return this.lastReport;
+    throw new Error("no last Repost");
+  }
+  set mostLastRepost(name: string) {
+    this.addReport(name);
+  }
+
   addEmployee(name: string) {
     if (name === "sdg") {
       return;
@@ -42,6 +51,7 @@ class AccountingDepartment extends Department {
   }
   addReport(text: string) {
     this.reports.push(text);
+    this.lastReport = text;
   }
   printReport() {
     console.log(this.reports);
@@ -73,11 +83,16 @@ const accounting = new AccountingDepartment("ACCOUNTIN", []);
 // IT.describe();
 // IT.printEmployeeInfo();
 
-console.log(accounting);
+// console.log(accounting);
+
+// console.log(accounting.getLastRepost); // throw Error
 accounting.addReport("somthings went wrong ....");
+accounting.mostLastRepost = "dummy report"; //set last repost
+console.log("lastReport :", accounting.mostLastRepost); // get last report
+
 accounting.addEmployee("Rick");
 accounting.addEmployee("sdg");
 
-accounting.describe();
+// accounting.describe();
 accounting.printReport();
-accounting.printEmployeeInfo();
+// accounting.printEmployeeInfo();
