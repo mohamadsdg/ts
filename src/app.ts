@@ -1,4 +1,6 @@
-class Department {
+abstract class Department {
+  //TIP: Cannot create an instance of an abstract class
+
   // private readonly id: string;
   // public name: string;
   // private employees: string[] = [];
@@ -10,18 +12,20 @@ class Department {
     return { name };
   }
 
-  constructor(private readonly id: string, public name: string) {
+  constructor(protected readonly id: string, public name: string) {
     this.id = id;
     this.name = name;
   }
-  describe(this: Department) {
-    console.log(`Department (${this.id}) : ${this.name}`);
-    console.log(
-      Department.employes,
-      Department.PI,
-      Department.createEmployee("hey YOU ....!")
-    );
-  }
+  // describe(this: Department) {
+  //   console.log(`Department (${this.id}) : ${this.name}`);
+  //   console.log(
+  //     Department.employes,
+  //     Department.PI,
+  //     Department.createEmployee("hey YOU ....!")
+  //   );
+  // }
+  abstract describe(this: Department): void;
+
   addEmployee(employee: string) {
     //this.id = "C2";
     this.employees.push(employee);
@@ -36,6 +40,10 @@ class ITDepartment extends Department {
   constructor(id: string, admins: string[]) {
     super(id, "IT-Department");
     this.admins = admins;
+  }
+
+  describe() {
+    console.log(`IT Department - ID : (${this.id})`);
   }
 }
 class AccountingDepartment extends Department {
@@ -67,9 +75,12 @@ class AccountingDepartment extends Department {
   printReport() {
     console.log(this.reports);
   }
+  describe() {
+    console.log(`IT AccountingDepartment - ID : ( ${this.id} )`);
+  }
 }
 
-const department = new Department("c1", "Accounting");
+// const department = new Department("c1", "Accounting");
 const IT = new ITDepartment("IT", ["SADEGHI"]);
 const accounting = new AccountingDepartment("ACCOUNTIN", []);
 
@@ -80,18 +91,18 @@ const accounting = new AccountingDepartment("ACCOUNTIN", []);
 // };
 // departmentCopy.describe();
 
-department.addEmployee("jo");
-department.addEmployee("morthy");
+// department.addEmployee("jo");
+// department.addEmployee("morthy");
 // department.employees[2] = "rose";
 
-department.describe();
-department.printEmployeeInfo();
+// department.describe();
+// department.printEmployeeInfo();
 
 // console.log(IT);
 // IT.addEmployee("Rick");
 // IT.addEmployee("Morthy");
 
-// IT.describe();
+IT.describe();
 // IT.printEmployeeInfo();
 
 // console.log(accounting);
@@ -104,6 +115,6 @@ department.printEmployeeInfo();
 // accounting.addEmployee("Rick");
 // accounting.addEmployee("sdg");
 
-// accounting.describe();
+accounting.describe();
 // accounting.printReport();
 // accounting.printEmployeeInfo();
