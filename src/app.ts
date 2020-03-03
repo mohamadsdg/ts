@@ -4,12 +4,23 @@ class Department {
   // private employees: string[] = [];
   protected employees: string[] = [];
 
+  static employes = { name: "Jared" };
+  static PI = Math.PI;
+  static createEmployee(name: string) {
+    return { name };
+  }
+
   constructor(private readonly id: string, public name: string) {
     this.id = id;
     this.name = name;
   }
   describe(this: Department) {
     console.log(`Department (${this.id}) : ${this.name}`);
+    console.log(
+      Department.employes,
+      Department.PI,
+      Department.createEmployee("hey YOU ....!")
+    );
   }
   addEmployee(employee: string) {
     //this.id = "C2";
@@ -69,12 +80,12 @@ const accounting = new AccountingDepartment("ACCOUNTIN", []);
 // };
 // departmentCopy.describe();
 
-// department.addEmployee("jo");
-// department.addEmployee("morthy");
+department.addEmployee("jo");
+department.addEmployee("morthy");
 // department.employees[2] = "rose";
 
-// department.describe();
-// department.printEmployeeInfo();
+department.describe();
+department.printEmployeeInfo();
 
 // console.log(IT);
 // IT.addEmployee("Rick");
@@ -86,13 +97,13 @@ const accounting = new AccountingDepartment("ACCOUNTIN", []);
 // console.log(accounting);
 
 // console.log(accounting.getLastRepost); // throw Error
-accounting.addReport("somthings went wrong ....");
-accounting.mostLastRepost = "dummy report"; //set last repost
-console.log("lastReport :", accounting.mostLastRepost); // get last report
+// accounting.addReport("somthings went wrong ....");
+// accounting.mostLastRepost = "dummy report"; //set last repost
+// console.log("lastReport :", accounting.mostLastRepost); // get last report
 
-accounting.addEmployee("Rick");
-accounting.addEmployee("sdg");
+// accounting.addEmployee("Rick");
+// accounting.addEmployee("sdg");
 
 // accounting.describe();
-accounting.printReport();
+// accounting.printReport();
 // accounting.printEmployeeInfo();
