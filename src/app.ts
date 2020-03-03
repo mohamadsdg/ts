@@ -48,10 +48,19 @@ class ITDepartment extends Department {
 }
 class AccountingDepartment extends Department {
   private lastReport: string;
-
-  constructor(id: string, private reports: string[]) {
+  private static instance: AccountingDepartment;
+  private constructor(id: string, private reports: string[]) {
     super(id, "Accounting-Department");
     this.lastReport = reports[reports.length];
+  }
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    return (this.instance = new AccountingDepartment(
+      `${new Date().getTime()}`,
+      []
+    ));
   }
   get mostLastRepost() {
     if (this.lastReport) return this.lastReport;
@@ -81,9 +90,9 @@ class AccountingDepartment extends Department {
 }
 
 // const department = new Department("c1", "Accounting");
-const IT = new ITDepartment("IT", ["SADEGHI"]);
-const accounting = new AccountingDepartment("ACCOUNTIN", []);
-
+const IT = new ITDepartment(`${new Date().getTime()}`, ["SADEGHI"]);
+const accounting = AccountingDepartment.getInstance();
+// console.log(IT);
 // const departmentCopy = {
 //   describe: accounting.describe,
 //   name: "Accounting_copy",
@@ -102,7 +111,10 @@ const accounting = new AccountingDepartment("ACCOUNTIN", []);
 // IT.addEmployee("Rick");
 // IT.addEmployee("Morthy");
 
-IT.describe();
+// IT.describe();
+// const IT2 = new ITDepartment(`${new Date().getTime()}`, ["sdss"]);
+// IT2.describe();
+// console.log(IT2);
 // IT.printEmployeeInfo();
 
 // console.log(accounting);
@@ -115,6 +127,11 @@ IT.describe();
 // accounting.addEmployee("Rick");
 // accounting.addEmployee("sdg");
 
-accounting.describe();
+// accounting.describe();
 // accounting.printReport();
 // accounting.printEmployeeInfo();
+// console.log(accounting);
+
+// const accounting2 = AccountingDepartment.getInstance();
+// accounting.describe();
+// console.log(accounting2);
