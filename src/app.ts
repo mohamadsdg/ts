@@ -1,5 +1,5 @@
 interface Greetable {
-  name: string;
+  readonly name: string;
   greet(phrase: string): void;
 }
 
@@ -22,7 +22,8 @@ class human extends person {
 // let person_1: Greetable;
 const person_1 = new person("ALi");
 const human_1 = new human("Mohamad", 26);
-console.log(human_1);
+person_1.name = "Mohamad";
+console.log(person_1);
 
 // interface Person {
 //   name: string;
