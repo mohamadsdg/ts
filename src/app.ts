@@ -1,3 +1,13 @@
+// # interface as function types
+// type addFn = (a: number, b: number) => number;
+interface addFn {
+  (a: number, b: number): number;
+}
+
+let add: addFn;
+add = (n1: number, n2: number) => n1 + n2;
+console.log(add(6, 3));
+
 interface Name {
   readonly name: string;
 }
@@ -5,7 +15,8 @@ interface Greetable extends Name {
   greet(phrase: string): void;
 }
 
-class person implements Greetable { //Greetable, AnotherInerface
+class person implements Greetable {
+  //Greetable, AnotherInerface
   name: string;
   constructor(n: string) {
     this.name = n;
