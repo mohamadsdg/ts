@@ -1,15 +1,17 @@
-interface Greetable {
+interface Name {
   readonly name: string;
+}
+interface Greetable extends Name {
   greet(phrase: string): void;
 }
 
-class person implements Greetable {
+class person implements Greetable { //Greetable, AnotherInerface
   name: string;
   constructor(n: string) {
     this.name = n;
   }
   greet(phrase: string) {
-    console.log(phrase + " " + this.name);
+    console.log(phrase + " ");
   }
 }
 class human extends person {
