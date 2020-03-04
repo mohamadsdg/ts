@@ -6,13 +6,14 @@ interface addFn {
 
 let add: addFn;
 add = (n1: number, n2: number) => n1 + n2;
-console.log(add(6, 3));
+// console.log(add(6, 3));
 
 interface Name {
   readonly name: string;
 }
 interface Greetable extends Name {
   greet(phrase: string): void;
+  optionalGreet?(phrase: string): void;
 }
 
 class person implements Greetable {
@@ -31,12 +32,17 @@ class human extends person {
     super(n);
     this.age = age;
   }
+  optionalGreet(phrase?: string) {
+    phrase
+      ? console.log(phrase + " optionalGreet")
+      : console.log("optionalGreet");
+  }
 }
 // let person_1: Greetable;
 const person_1 = new person("ALi");
 const human_1 = new human("Mohamad", 26);
-person_1.name = "Mohamad";
 console.log(person_1);
+human_1.optionalGreet();
 
 // interface Person {
 //   name: string;
