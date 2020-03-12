@@ -171,5 +171,18 @@ const fetchUserData = {
 // vanilla javascript
 // console.log(fetchUserData.job ? fetchUserData.job.title : "not found");
 
-console.log(fetchUserData?.job?.title);
+// console.log(fetchUserData?.job?.title);
 // console.log(fetchUserData.job.title);
+
+// Nullish Coalescing oprator (it means if [key] is null or undefined and really just that not an empty string not)
+// Tip : add a question mark after the thing you're not sure whether it's to find or not
+// using double question Mark (??) operator
+// best practice : very useful feature which can help you deal with knowledge or undefined values with grace
+// #######################################
+
+const userInput = "Hello";
+// vanila js (falsy value skip eg:'' )
+// let storeData = userInput || "DEFUALT";
+// ts (just null and undefined )
+let storeData = userInput ?? "DEFUALT";
+console.log(storeData);
