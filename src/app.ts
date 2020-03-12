@@ -172,3 +172,4 @@ const fetchUserData = {
 // console.log(fetchUserData.job ? fetchUserData.job.title : "not found");
 
 console.log(fetchUserData?.job?.title);
+// console.log(fetchUserData.job.title);
