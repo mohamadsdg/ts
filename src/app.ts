@@ -112,4 +112,17 @@ function moveAnimal(animal: Animal) {
   console.log("Moving With Speed : " + speed);
 }
 
-moveAnimal({ type: "Horse", runningSpedd: 100 });
+// moveAnimal({ type: "Horse", runningSpedd: 100 });
+
+// typecasting (helps you tell typescript that some value is office specific type where typescript is not able to detect but you as a developer know)
+// Tip : two ways of type cost : angle brackets<> , as
+// best practice : get access to something in the dorm
+//  ignore the or null case for now | fix by adding an exclamation mark (!) otherwise check it with if
+// #######################################
+
+// const userInputElm = <HTMLInputElement>document.querySelector("#input-elm")!;
+// const userInputElm = document.querySelector("#input-elm")! as HTMLInputElement;
+// userInputElm.value = " hey there !";
+
+const userInputElm = document.querySelector("#input-elm");
+userInputElm && (userInputElm as HTMLInputElement).value = " hey there !";
