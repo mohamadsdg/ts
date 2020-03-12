@@ -155,5 +155,20 @@ function add_v2(a: Combinable, b: Combinable) {
   return a + b;
 }
 
-const resualt = add_v2("mohamadReza", " Sadeghi");
-console.log(resualt.split(" "));
+// const resualt = add_v2("mohamadReza", " Sadeghi");
+// console.log(resualt.split(" "));
+
+// optional chaining ( optional chaining operator here helps us safely access nested properties and nested objects in our object data)
+// Tip : add a question mark after the thing you're not sure whether it's to find or not
+// using mark question (?) befor chaine
+// #######################################
+
+const fetchUserData = {
+  id: "u1",
+  name: "Mamrez"
+  // job: { title: "developer", dec: "at Home" }
+};
+// vanilla javascript
+// console.log(fetchUserData.job ? fetchUserData.job.title : "not found");
+
+console.log(fetchUserData?.job?.title);
