@@ -121,8 +121,20 @@ function moveAnimal(animal: Animal) {
 // #######################################
 
 // const userInputElm = <HTMLInputElement>document.querySelector("#input-elm")!;
-// const userInputElm = document.querySelector("#input-elm")! as HTMLInputElement;
-// userInputElm.value = " hey there !";
+const userInputElm = document.querySelector("#input-elm")! as HTMLInputElement;
+userInputElm.value = " hey there !";
 
-const userInputElm = document.querySelector("#input-elm");
-userInputElm && (userInputElm as HTMLInputElement).value = " hey there !";
+// const userInputElm = document.querySelector("#input-elm");
+// userInputElm && (userInputElm as HTMLInputElement).value = " hey there !";
+
+// index types (dynamic property names )
+// Tip :
+// #######################################
+interface ErrorContainer {
+  [key: string]: string;
+}
+
+const errorBag: ErrorContainer = {
+  email: "not a valid email",
+  username: "admin"
+};
