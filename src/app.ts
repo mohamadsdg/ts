@@ -138,3 +138,22 @@ const errorBag: ErrorContainer = {
   email: "not a valid email",
   username: "admin"
 };
+
+// function overloads (what's getting returned for two different combinations you might support in your function )
+// Tip : help you in situations like exmple here where typescript would not be able to correctly inferred a return type on its own
+// #######################################
+
+function add_v2(a: string, b: string): string;
+function add_v2(a: number, b: number): number;
+function add_v2(a: string, b: number): string;
+function add_v2(a: number, b: string): string;
+
+function add_v2(a: Combinable, b: Combinable) {
+  if (typeof a === "string" || typeof b === "string") {
+    return a.toString() + b.toString();
+  }
+  return a + b;
+}
+
+const resualt = add_v2("mohamadReza", " Sadeghi");
+console.log(resualt.split(" "));
