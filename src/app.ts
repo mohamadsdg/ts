@@ -82,5 +82,34 @@ function useVehicle(vehicle: Vehicle) {
   vehicle instanceof Truck && vehicle.loadCargo(1000);
 }
 
-useVehicle(v1);
-useVehicle(v2);
+// useVehicle(v1);
+// useVehicle(v2);
+
+// discriminated union (one common property in every object that makes up our union which describes Stat object)
+// Tip : understand which properties are available for such an object and which properties are not
+// useful pattern | working with objects and with union types
+// #######################################
+interface Bird {
+  type: "Bird";
+  flyingSpeed: number;
+}
+interface Horse {
+  type: "Horse";
+  runningSpedd: number;
+}
+type Animal = Bird | Horse;
+
+function moveAnimal(animal: Animal) {
+  let speed;
+  switch (animal.type) {
+    case "Horse":
+      speed = animal.runningSpedd;
+      break;
+    case "Bird":
+      speed = animal.flyingSpeed;
+      break;
+  }
+  console.log("Moving With Speed : " + speed);
+}
+
+moveAnimal({ type: "Horse", runningSpedd: 100 });
