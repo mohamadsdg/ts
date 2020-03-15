@@ -68,10 +68,20 @@ function countAndDescribe<T extends Lengthable>(element: T): [T, string] {
   if (element.length === 1) {
     describeTex = "Got 1 element.";
   } else if (element.length > 1) {
-    describeTex = "Got " + element.length + "elements";
+    describeTex = "Got " + element.length + " elements";
   }
   return [element, describeTex];
 }
 
-countAndDescribe("Hi there");
-countAndDescribe(["Hi there"]);
+// console.log(countAndDescribe("Hi there"));
+// console.log(countAndDescribe(["Hi there"]));
+
+// keyof Constraints
+// #######################################
+function extractAndConvert<T extends object, U extends keyof T>(
+  obj: T,
+  key: U
+) {
+  return obj[key];
+}
+console.log(extractAndConvert({ name: "mamrez" }, "name"));
