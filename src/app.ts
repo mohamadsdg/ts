@@ -56,6 +56,22 @@
 function merge<T extends object, U extends object>(objectA: T, objectB: U) {
   return Object.assign(objectA, objectB);
 }
-const mergedObj = merge({ name: "sdg", hobbies: ["Sports"] }, 20);
+const mergedObj = merge({ name: "sdg", hobbies: ["Sports"] }, { age: 20 }); // wrong 20 correct {age:20}
 
-console.log(mergedObj);
+// console.log(mergedObj);
+
+interface Lengthable {
+  length: number;
+}
+function countAndDescribe<T extends Lengthable>(element: T): [T, string] {
+  let describeTex = "Got No Value ";
+  if (element.length === 1) {
+    describeTex = "Got 1 element.";
+  } else if (element.length > 1) {
+    describeTex = "Got " + element.length + "elements";
+  }
+  return [element, describeTex];
+}
+
+countAndDescribe("Hi there");
+countAndDescribe(["Hi there"]);
