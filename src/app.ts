@@ -42,9 +42,20 @@
 //  exp : T it basically fills in an object type with an object with a name property which holds a string and a Hobbes property hich holds a array
 //  **typescript simply infers the types of the values we're passing as arguments**
 
-function merge<T, U>(objectA: T, objectB: U) {
+// function merge<T, U>(objectA: T, objectB: U) {
+//   return Object.assign(objectA, objectB);
+// }
+// const mergedObj = merge({ name: "sdg", hobbies: ["Sports"] }, { age: 30 });
+
+// console.log(mergedObj);
+
+// Constraints ()
+// Tip : we're just saying this should be of any type I don't care Now often that's not OK You want to restrict the types of T and U
+// #######################################
+
+function merge<T extends object, U extends object>(objectA: T, objectB: U) {
   return Object.assign(objectA, objectB);
 }
-const mergedObj = merge({ name: "sdg", hobbies: ["Sports"] }, { age: 30 });
+const mergedObj = merge({ name: "sdg", hobbies: ["Sports"] }, 20);
 
 console.log(mergedObj);
