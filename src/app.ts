@@ -132,3 +132,29 @@ numberStorage.removeItem(8);
 // objStorage.addItem({ name: "mahla" });
 // objStorage.removeItem(objMohamad); //({ name: "mohamad" }) technically this is a new object
 // console.log(objStorage.getItems());
+
+// Utility Types (utility types to facilitate common type transformations)
+// 1. partial<type(ex:object)> (tells typescript that this is an object which in the end will be a object)
+//  want to temporarily switch one of your object types one of your interfaces to be optional only to make sure that all the properties and data can be optional
+//  temporarily and then the partial type would allow you to do
+// *** set everything to optional
+// 2. Readonly locked TYPE  we can't add more here
+// #######################################
+
+interface CourseGoal {
+  title: string;
+  description: string;
+  data: Date;
+}
+function CreateCourseGoal(title: string, description: string, data: Date) {
+  let courseGoal: Partial<CourseGoal> = {};
+  courseGoal.title = title;
+  courseGoal.description = description;
+  courseGoal.data = data;
+  return courseGoal;
+  // return { title, description, data };
+}
+
+const names: Readonly<string[]> = ["mohamad", "mahla"];
+names.push("mobina");
+names.pop("mahla");
