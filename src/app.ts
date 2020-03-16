@@ -84,4 +84,51 @@ function extractAndConvert<T extends object, U extends keyof T>(
 ) {
   return obj[key];
 }
-console.log(extractAndConvert({ name: "mamrez" }, "name"));
+// console.log(extractAndConvert({ name: "mamrez" }, "name"));
+
+// Generics Class ()
+// Tip :
+//  own generic types inside of classes so you | needed in a certain method
+// #######################################
+
+class DataStorage<T extends string | number | boolean> {
+  // array of T type
+  private data: T[] = [];
+
+  addItem(item: T) {
+    this.data.push(item);
+  }
+  removeItem(item: T) {
+    // skip notfound item
+    // when nothing to found item return -1 and -1 inside slice refer to last index
+    if (this.data.indexOf(item) === -1) return;
+    this.data.splice(this.data.indexOf(item), 1);
+  }
+  getItems() {
+    return [...this.data];
+  }
+}
+
+// I am saying that this will be a data storage which only stores strings so I can
+const textStorage = new DataStorage<string>();
+textStorage.addItem("mohamadreza");
+textStorage.addItem("mobina");
+textStorage.addItem("mahla");
+textStorage.removeItem("mohamadreza");
+// console.log(textStorage.getItems());
+
+const numberStorage = new DataStorage<number>();
+numberStorage.addItem(2);
+numberStorage.addItem(5);
+numberStorage.addItem(6);
+numberStorage.removeItem(8);
+// console.log(numberStorage.getItems());
+
+// const objStorage = new DataStorage<object>();
+// //you know objects in JavaScript are reference types now attached you find an additional resource which allows you to dive into reference words
+// let objMohamad = { name: "mohamad" };
+// objStorage.addItem(objMohamad);
+// objStorage.addItem({ name: "mobina" });
+// objStorage.addItem({ name: "mahla" });
+// objStorage.removeItem(objMohamad); //({ name: "mohamad" }) technically this is a new object
+// console.log(objStorage.getItems());
