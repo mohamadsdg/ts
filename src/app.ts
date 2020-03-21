@@ -178,5 +178,51 @@ class Person4 {
     console.log("Dummy Log");
   }
 }
-const _p = new Person4();
-console.log(_p);
+// const _p = new Person4();
+// console.log(_p);
+
+// return Types(can return values in our decorators too but not all of them or not in all of them)
+// Tip : sample Autobinding
+// Tip : event listener if we point at a function it should be executed
+//    The this keyword inside of that function will not have the same context or reference as it has if we call just p dot show message
+//    the scenario here where we use an event listener this will refer to the target of the event because event listener in the end
+//    binds this in the function which is to be executed to the target of the event
+//  would be to use the bind method and bind show message to p or bind this in show message to p so that when does
+//  executes this is not referring to what ad event listener wants it to refer to but instead this instead of show
+//  message will refer to this P to this object here again
+// #######################################
+
+function Autobinding(
+  _: any,
+  _2: string,
+  descriptor: PropertyDescriptor
+) {
+  const originalMethod = descriptor.value;
+  // console.log(descriptor);
+  const adjdescriptor = {
+    enumerable: false,
+    configurable: true,
+    get() {
+      //getter is like an extra layer between our function that's being executed and the object to which it belongs and the event listener
+      const boundFn = originalMethod.bind(this);
+      return boundFn;
+    }
+  };
+  // console.log(adjdescriptor);
+  return adjdescriptor;
+}
+class Print {
+  message = "I clicked !";
+
+  @Autobinding
+  showMessage() {
+    // console.log(e); trick for undrestand target of the event
+    console.log(this.message);
+  }
+}
+const p = new Print();
+// p.showMessage(); // this case refer to printer
+
+const button = document.querySelector("button")!;
+// button.addEventListener("click", p.showMessage.bind(p));
+button.addEventListener("click", p.showMessage);
