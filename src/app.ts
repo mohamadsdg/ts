@@ -59,8 +59,8 @@ function WithThemplate(template: string, hookId: string) {
     }
   };
 }
-@Logger2("LoGGING  - PERSON")
-@WithThemplate("<h1>From Themplate</h1>", "app")
+// @Logger2("LoGGING  - PERSON")
+// @WithThemplate("<h1>From Themplate</h1>", "app")
 class Person3 {
   name = "Mohamad";
   constructor() {
@@ -71,3 +71,73 @@ class Person3 {
   }
 }
 // const pers3 = new Person3();
+
+// Property Decorators and Accessor and parameter Decorators()
+// Tip : which arguments decorator gets depends on where you add it
+// (Property(2 argument) | Accessor(3 argument) | parameter (3 argument) | Parameter (3 argument))
+// Tip2 : they all Decorators executed when you defined this class not the instantiation that's important to understand.
+// Tip3 : decorators allow you to do additional behind the scenes setup work When a class is defined(meta programming concept) That's the idea behind decorators
+// Tip4 : decorator itself really is just a function that executes when your classes defined
+//        use the decorator to do some behind the scenes work to then set up some code that should run whatever it is called to add extra metadata or store some data somewhere
+// Tip5 : adding extra functionality behind the scenes which then sometimes can execute when you do something (Themplate useCase)
+// #######################################
+
+function Log(target: any, propertyName: string | Symbol) {
+  // (instance Propery (portotype), name Property )
+  // console.log(new target.constructor("Book", 20));
+  // console.log("prototype", target);
+  console.log("Propery Decorator", propertyName);
+}
+function Log2(
+  target: any,
+  accessorName: string,
+  descriptor: PropertyDescriptor
+) {
+  // (instance Propery (portotype), name Accessor , descriptor)
+  // console.log(new target.constructor("Book", 20));
+  // console.log("prototype", target);
+  console.log("Accessor Decorator", accessorName);
+  console.log("Accessor descriptor", descriptor);
+}
+function Log3(
+  target: any,
+  methodName: string | symbol,
+  descriptor: PropertyDescriptor
+) {
+  // (instance Propery (portotype), name Method , descriptor)
+  // console.log("prototype", target);
+  console.log("Method Decorator", methodName);
+  console.log("Method descriptor", descriptor);
+}
+function Log4(target: any, propertyName: string | symbol, position: number) {
+  // (instance Propery (portotype), name Method , position of his argument)
+  // console.log(new target.constructor("Book", 20));
+  // console.log("prototype", target);
+  console.log("Parameter Decorator", propertyName);
+  // console.log("Parameter position", position);
+}
+class Product {
+  @Log
+  title: string;
+  private _price: number;
+
+  @Log2
+  set price(val: number) {
+    if (val > 0) {
+      this._price = val;
+    } else {
+      throw new Error("Invalid Price ");
+    }
+  }
+  // get price() {
+  //   return this._price;
+  // }
+  constructor(a: string, b: number) {
+    this.title = a;
+    this._price = b;
+  }
+  @Log3
+  getPriceWithTax(@Log4 tax: number) {
+    return this._price * (1 + tax);
+  }
+}
