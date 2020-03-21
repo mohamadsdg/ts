@@ -192,11 +192,7 @@ class Person4 {
 //  message will refer to this P to this object here again
 // #######################################
 
-function Autobinding(
-  _: any,
-  _2: string,
-  descriptor: PropertyDescriptor
-) {
+function Autobinding(_: any, _2: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
   // console.log(descriptor);
   const adjdescriptor = {
@@ -226,3 +222,81 @@ const p = new Print();
 const button = document.querySelector("button")!;
 // button.addEventListener("click", p.showMessage.bind(p));
 button.addEventListener("click", p.showMessage);
+
+// validation with Decorators ()
+// Tip : Again keep in mind this(decorators) could be part of our own third party library So in there we could have some kind of storage
+//      that stores that for this class and for this title property for example we want wanted to be required
+//      and in validate we can then check if in this storage for the object we got for the class the object is based on
+//      we do have a validated registered for the title for the price and so on and we then run our validation logic
+//      That's idea here behined
+// #######################################
+interface validatorConfig {
+  [property: string]: {
+    [validateProp: string]: string[]; //['required','positive]
+  };
+}
+const registeredValidator: validatorConfig = {};
+function Require(target: any, propertyName: string) {
+  registeredValidator[target.constructor.name] = {
+    ...registeredValidator[target.constructor.name],
+    [propertyName]: ["required"]
+  };
+
+  // console.log(registeredValidator);
+}
+function PositiveNumber(target: any, propertyName: string) {
+  registeredValidator[target.constructor.name] = {
+    ...registeredValidator[target.constructor.name],
+    [propertyName]: ["positive"]
+  };
+  // console.log(registeredValidator);
+}
+function validate(obj: any) {
+  // console.log(obj);
+  const objValidstorConfig = registeredValidator[obj.constructor.name];
+  // console.log(objValidstorConfig, obj.constructor.name);
+  if (!objValidstorConfig) {
+    return true;
+  }
+  let isValid = true;
+  for (const propName in objValidstorConfig) {
+    for (const valueProp of objValidstorConfig[propName]) {
+      switch (valueProp) {
+        case "required":
+          isValid = isValid && !!obj[propName];
+          break;
+        case "positive":
+          isValid = isValid && obj[propName] > 0;
+          break;
+      }
+    }
+  }
+  console.log(isValid);
+  return isValid;
+}
+class Course {
+  @Require
+  title: string;
+  @PositiveNumber
+  price: number;
+  constructor(t: string, p: number) {
+    this.title = t;
+    this.price = p;
+  }
+}
+
+const CourseForm = document.querySelector("form")!;
+CourseForm.addEventListener("submit", ev => {
+  ev.preventDefault();
+  const titleElm = document.getElementById("title") as HTMLInputElement;
+  const priceElm = document.getElementById("price") as HTMLInputElement;
+  const title = titleElm.value;
+  const price = +priceElm.value;
+
+  const course = new Course(title, price);
+  if (!validate(course)) {
+    alert("Invalid Input");
+    return;
+  }
+  console.log(course);
+});
