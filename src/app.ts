@@ -86,7 +86,7 @@ function Log(target: any, propertyName: string | Symbol) {
   // (instance Propery (portotype), name Property )
   // console.log(new target.constructor("Book", 20));
   // console.log("prototype", target);
-  console.log("Propery Decorator", propertyName);
+  // console.log("Propery Decorator", propertyName);
 }
 function Log2(
   target: any,
@@ -96,8 +96,8 @@ function Log2(
   // (instance Propery (portotype), name Accessor , descriptor)
   // console.log(new target.constructor("Book", 20));
   // console.log("prototype", target);
-  console.log("Accessor Decorator", accessorName);
-  console.log("Accessor descriptor", descriptor);
+  // console.log("Accessor Decorator", accessorName);
+  // console.log("Accessor descriptor", descriptor);
 }
 function Log3(
   target: any,
@@ -106,14 +106,14 @@ function Log3(
 ) {
   // (instance Propery (portotype), name Method , descriptor)
   // console.log("prototype", target);
-  console.log("Method Decorator", methodName);
-  console.log("Method descriptor", descriptor);
+  // console.log("Method Decorator", methodName);
+  // console.log("Method descriptor", descriptor);
 }
 function Log4(target: any, propertyName: string | symbol, position: number) {
   // (instance Propery (portotype), name Method , position of his argument)
   // console.log(new target.constructor("Book", 20));
   // console.log("prototype", target);
-  console.log("Parameter Decorator", propertyName);
+  // console.log("Parameter Decorator", propertyName);
   // console.log("Parameter position", position);
 }
 class Product {
@@ -141,3 +141,42 @@ class Product {
     return this._price * (1 + tax);
   }
 }
+
+// Returnin Class Decorators ()
+// Tip : turn our decorator function into a generic function where we get a type and set this as the type of original constructor
+// Tip2 : by assigning special type an object type where we set a new property(This is a reserved name: tells typescript that in the end this will be an object)
+//  original constructor function will not just produce any object({}) but actually will produce an object with a name property{name ,...} which will be of type String
+// #######################################
+function WithThemplate2(template: string, hookId: string) {
+  return function<T extends { new (...args: any[]): { name: string } }>(
+    originalConstructor: T
+  ) {
+    return class extends originalConstructor {
+      family = "sadeghi";
+      constructor(..._: any[]) {
+        // any argument pass to constructor
+        // also need here in the original constructor function
+        super(); // previus logic
+        // below extera logic
+        const hookElm = document.getElementById(hookId)!;
+        if (hookElm) {
+          // person.dummyLog()
+          hookElm.querySelector("h1")!.textContent =
+            this.name + " " + this.family;
+        }
+      }
+    };
+  };
+}
+@WithThemplate2("<h1>From Themplate</h1>", "app")
+class Person4 {
+  name = "Mohamad";
+  constructor() {
+    console.log("Create Person Object");
+  }
+  dummyLog() {
+    console.log("Dummy Log");
+  }
+}
+const _p = new Person4();
+console.log(_p);
