@@ -56,6 +56,9 @@ function validate(validatableInput: Validatable) {
   return isValid;
 }
 
+/**
+ * Class
+ */
 class ProjectInput {
   /**
    * declare property
@@ -152,7 +155,6 @@ class ProjectInput {
     this.peopleInputElement.value = "";
   }
 }
-
 class ProjectList {
   /**
    * declare property
@@ -160,7 +162,8 @@ class ProjectList {
   templateElement: HTMLTemplateElement;
   hostElement: HTMLDivElement;
   element: HTMLElement;
-  constructor(private type: string) {
+
+  constructor(private type: "active" | "finished") {
     /**
      * bind themplate to app
      */
