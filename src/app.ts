@@ -1,4 +1,15 @@
 /**
+ * Interface
+ */
+interface Validatable {
+  value: string | number;
+  required?: boolean;
+  maxLength?: number;
+  minLength?: number;
+  max?: number;
+  min?: number;
+}
+/**
  * Decorator
  */
 function Autobind(_: any, _2: string, descript: PropertyDescriptor) {
@@ -13,6 +24,38 @@ function Autobind(_: any, _2: string, descript: PropertyDescriptor) {
   // console.log(adjDescriptor);
   return adjDescriptor;
 }
+/**
+ * Utils
+ */
+function validate(validatableInput: Validatable) {
+  let isValid = true;
+  if (validatableInput.required) {
+    isValid = isValid && validatableInput.value.toString().trim().length !== 0;
+  }
+  if (
+    validatableInput.maxLength &&
+    typeof validatableInput.value === "string"
+  ) {
+    isValid =
+      isValid && validatableInput.value.length <= validatableInput.maxLength;
+  }
+  if (
+    validatableInput.minLength &&
+    typeof validatableInput.value === "string"
+  ) {
+    isValid =
+      isValid && validatableInput.value.length >= validatableInput.minLength;
+  }
+  if (validatableInput.max && typeof validatableInput.value === "number") {
+    isValid = isValid && validatableInput.value <= validatableInput.max;
+  }
+  if (validatableInput.min && typeof validatableInput.value === "number") {
+    isValid = isValid && validatableInput.value >= validatableInput.min;
+  }
+
+  return isValid;
+}
+
 class ProjectInput {
   /**
    * declare property
@@ -63,10 +106,50 @@ class ProjectInput {
   @Autobind
   private submitHandler(e: Event) {
     e.preventDefault();
-    console.log(this.titleInputElement.value);
+    const userInput = this.getUserInput();
+    if (Array.isArray(userInput)) {
+      // console.log("userInput => ", userInput);
+      this.clearInputs();
+    }
   }
   private configure() {
     this.element.addEventListener("submit", this.submitHandler);
+  }
+  private getUserInput(): [string, string, number] | void {
+    const titleValue = this.titleInputElement.value;
+    const descriptionValue = this.descInputElement.value;
+    const peopleValue = this.peopleInputElement.value;
+
+    const titleValidatable: Validatable = {
+      value: titleValue,
+      required: true
+    };
+    const descriptionValidatable: Validatable = {
+      value: descriptionValue,
+      required: true,
+      minLength: 5
+    };
+    const peopleValidatable: Validatable = {
+      value: +peopleValue,
+      required: true,
+      min: 1,
+      max: 3
+    };
+    if (
+      validate(titleValidatable) &&
+      validate(descriptionValidatable) &&
+      validate(peopleValidatable)
+    ) {
+      return [titleValue, descriptionValue, +peopleValue];
+    } else {
+      window.alert("Invalid Entry Input");
+      return;
+    }
+  }
+  private clearInputs() {
+    this.titleInputElement.value = "";
+    this.descInputElement.value = "";
+    this.peopleInputElement.value = "";
   }
 }
 
