@@ -1,4 +1,40 @@
 /**
+ * subscription pattern inside of our state we manage a list of listeners So a list of functions in the end
+ * which should be called whenever something changes (It's an array of functions of function references right)
+ * ******
+ * The idea is that whenever something changes like (body addProject) when we add a new project we call all listener functions
+ * ******
+ */
+/**
+ * Global Store
+ */
+class Store {
+  public projects: any[] = [];
+  private static instance: Store;
+  private constructor() {}
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    this.instance = new Store();
+    return this.instance;
+  }
+  public addProject(title: string, description: string, numOfPeople: number) {
+    const newProject = {
+      id: Math.random().toString(),
+      title: title,
+      description: description,
+      people: numOfPeople
+    };
+    this.projects.push(newProject);
+    
+    console.log("renderList", this.projects);
+  }
+}
+const globalStore = Store.getInstance();
+
+/**
  * Interface
  */
 interface Validatable {
@@ -143,6 +179,7 @@ class ProjectInput {
       validate(descriptionValidatable) &&
       validate(peopleValidatable)
     ) {
+      globalStore.addProject(titleValue, descriptionValue, +peopleValue);
       return [titleValue, descriptionValue, +peopleValue];
     } else {
       window.alert("Invalid Entry Input");
@@ -182,6 +219,7 @@ class ProjectList {
      */
     this.attach();
     this.renderContent();
+    // this.renderList();
   }
   private attach() {
     this.hostElement.insertAdjacentElement("beforeend", this.element);
@@ -192,6 +230,9 @@ class ProjectList {
     this.element.querySelector(
       "h2"
     )!.textContent = `${this.type} PROJECTS`.toLocaleUpperCase();
+  }
+  private renderList() {
+    console.log("renderList", globalStore.projects);
   }
 }
 
