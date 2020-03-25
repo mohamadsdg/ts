@@ -8,9 +8,13 @@
 /**
  * Global Store
  */
+type subscribeType = {
+  [key: string]: Function[];
+};
 class Store {
   public projects: any[] = [];
   private static instance: Store;
+  private subscribers: subscribeType = {};
   private constructor() {}
 
   static getInstance() {
@@ -20,6 +24,21 @@ class Store {
     this.instance = new Store();
     return this.instance;
   }
+  public subscribe(eventName: string, callback: Function) {
+    if (!Array.isArray(this.subscribers[eventName])) {
+      this.subscribers[eventName] = [];
+    }
+    this.subscribers[eventName].push(callback);
+  }
+  public publish(eventName: string, data: any) {
+    if (!Array.isArray(this.subscribers[eventName])) {
+      return;
+    }
+    for (const callback of this.subscribers[eventName]) {
+      callback(data);
+    }
+  }
+
   public addProject(title: string, description: string, numOfPeople: number) {
     const newProject = {
       id: Math.random().toString(),
@@ -28,8 +47,9 @@ class Store {
       people: numOfPeople
     };
     this.projects.push(newProject);
-    
-    console.log("renderList", this.projects);
+
+    // feed callback subscribe
+    this.publish("data_list", this.projects.slice());
   }
 }
 const globalStore = Store.getInstance();
@@ -199,6 +219,7 @@ class ProjectList {
   templateElement: HTMLTemplateElement;
   hostElement: HTMLDivElement;
   element: HTMLElement;
+  assignedProjects: any[] = [];
 
   constructor(private type: "active" | "finished") {
     /**
@@ -214,15 +235,30 @@ class ProjectList {
     );
     this.element = importedNode.firstElementChild as HTMLElement;
     this.element.id = `${this.type}-projects`;
+
+    globalStore.subscribe("data_list", (value: any[]) => {
+      this.assignedProjects = value;
+      this.renderProject();
+    });
+
     /**
      *  Register Method for Initial
      */
     this.attach();
     this.renderContent();
-    // this.renderList();
   }
   private attach() {
     this.hostElement.insertAdjacentElement("beforeend", this.element);
+  }
+  private renderProject() {
+    const ulElmn = this.element.querySelector(
+      `#${this.type}-projects-list`
+    )! as HTMLUListElement;
+    for (const project of this.assignedProjects) {
+      const listElm = document.createElement("li");
+      listElm.textContent = project.title;
+      ulElmn.appendChild(listElm);
+    }
   }
   private renderContent() {
     const listId = `${this.type}-projects-list`;
@@ -230,9 +266,6 @@ class ProjectList {
     this.element.querySelector(
       "h2"
     )!.textContent = `${this.type} PROJECTS`.toLocaleUpperCase();
-  }
-  private renderList() {
-    console.log("renderList", globalStore.projects);
   }
 }
 
