@@ -5,8 +5,8 @@ type subscribeType = {
   [key: string]: Function[];
 };
 enum ProjectStatus {
-  ACTIVE,
-  FINISHED
+  ACTIVE = "active",
+  FINISHED = "finished"
 }
 /**
  * Interface
@@ -66,6 +66,18 @@ function validate(validatableInput: Validatable) {
   return isValid;
 }
 /**
+ * base class
+ */
+class Project {
+  constructor(
+    public id: string,
+    public title: string,
+    public description: string,
+    public people: number,
+    public status: ProjectStatus
+  ) {}
+}
+/**
  * subscription pattern inside of our state we manage a list of listeners So a list of functions in the end
  * which should be called whenever something changes (It's an array of functions of function references right)
  * ******
@@ -75,11 +87,30 @@ function validate(validatableInput: Validatable) {
 /**
  * Global Store
  */
-class Store {
-  public projects: Project[] = [];
-  private static instance: Store;
+class GlobalStore {
   private subscribers: subscribeType = {};
-  private constructor() {}
+
+  public subscribe(eventName: string, callback: Function) {
+    if (!Array.isArray(this.subscribers[eventName])) {
+      this.subscribers[eventName] = [];
+    }
+    this.subscribers[eventName].push(callback);
+  }
+  protected publish<T extends object>(eventName: string, data: T) {
+    if (!Array.isArray(this.subscribers[eventName])) {
+      return;
+    }
+    for (const callback of this.subscribers[eventName]) {
+      callback(data);
+    }
+  }
+}
+class Store extends GlobalStore {
+  private projects: Project[] = [];
+  private static instance: Store;
+  private constructor() {
+    super();
+  }
 
   static getInstance() {
     if (this.instance) {
@@ -88,28 +119,7 @@ class Store {
     this.instance = new Store();
     return this.instance;
   }
-  public subscribe(eventName: string, callback: Function) {
-    if (!Array.isArray(this.subscribers[eventName])) {
-      this.subscribers[eventName] = [];
-    }
-    this.subscribers[eventName].push(callback);
-  }
-  public publish<T extends object>(eventName: string, data: T) {
-    if (!Array.isArray(this.subscribers[eventName])) {
-      return;
-    }
-    for (const callback of this.subscribers[eventName]) {
-      callback(data);
-    }
-  }
-
   public addProject(title: string, description: string, numOfPeople: number) {
-    // const newProject = {
-    //   id: Math.random().toString(),
-    //   title: title,
-    //   description: description,
-    //   people: numOfPeople
-    // };
     const newProject = new Project(
       Math.random().toString(),
       title,
@@ -123,45 +133,62 @@ class Store {
     this.publish("data_list", this.projects.slice());
   }
 }
+// store Project
 const globalStore = Store.getInstance();
 
 /**
  * Class
  */
-class Project {
+// every component is in the end a renderable object which has some functionalities that allow us to render it
+// and then the concrete instances or the inherited classes
+abstract class Component<T extends HTMLElement, U extends HTMLElement> {
+  templateElement: HTMLTemplateElement;
+  hostElement: T;
+  element: U;
   constructor(
-    public id: string,
-    public title: string,
-    public description: string,
-    public people: number,
-    public status: ProjectStatus
-  ) {}
+    themplateId: string,
+    hostElementId: string,
+    insertAtStart: boolean,
+    newElmId?: string
+  ) {
+    /**
+     * bind themplate to app
+     */
+    this.templateElement = document.getElementById(
+      themplateId
+    )! as HTMLTemplateElement;
+    this.hostElement = document.getElementById(hostElementId)! as T;
+    const importedNode = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    this.element = importedNode.firstElementChild as U;
+    if (newElmId) this.element.id = newElmId;
+
+    /**
+     *  Register Method for Initial
+     */
+    this.attach(insertAtStart);
+  }
+  private attach(insertAtBeginning: boolean) {
+    this.hostElement.insertAdjacentElement(
+      insertAtBeginning ? "afterbegin" : "beforeend",
+      this.element
+    );
+  }
+  abstract configure(): void;
+  abstract renderContent(): void;
 }
-class ProjectInput {
+class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   /**
    * declare property
    */
-  templateElement: HTMLTemplateElement;
-  hostElement: HTMLDivElement;
-  element: HTMLFormElement;
   titleInputElement: HTMLInputElement;
   descInputElement: HTMLInputElement;
   peopleInputElement: HTMLInputElement;
 
   constructor() {
-    /**
-     * bind themplate to app
-     */
-    this.templateElement = document.getElementById(
-      "project-input"
-    )! as HTMLTemplateElement;
-    this.hostElement = document.getElementById("app")! as HTMLDivElement;
-    const importedNode = document.importNode(
-      this.templateElement.content,
-      true
-    );
-    this.element = importedNode.firstElementChild as HTMLFormElement;
-    this.element.id = "user-input";
+    super("project-input", "app", true, "user-input");
     /**
      * Getting Input
      */
@@ -177,12 +204,12 @@ class ProjectInput {
     /**
      *  Register Method for Initial
      */
-    this.attach();
     this.configure();
   }
-  private attach() {
-    this.hostElement.insertAdjacentElement("afterbegin", this.element);
+  configure() {
+    this.element.addEventListener("submit", this.submitHandler);
   }
+  renderContent() {}
 
   @Autobind
   private submitHandler(e: Event) {
@@ -192,9 +219,6 @@ class ProjectInput {
       // console.log("userInput => ", userInput);
       this.clearInputs();
     }
-  }
-  private configure() {
-    this.element.addEventListener("submit", this.submitHandler);
   }
   private getUserInput(): [string, string, number] | void {
     const titleValue = this.titleInputElement.value;
@@ -234,60 +258,44 @@ class ProjectInput {
     this.peopleInputElement.value = "";
   }
 }
-class ProjectList {
+class ProjectList extends Component<HTMLDivElement, HTMLElement> {
   /**
    * declare property
    */
-  templateElement: HTMLTemplateElement;
-  hostElement: HTMLDivElement;
-  element: HTMLElement;
-  assignedProjects: Project[] = [];
+  private assignedProjects: Project[] = [];
 
   constructor(private type: "active" | "finished") {
-    /**
-     * bind themplate to app
-     */
-    this.templateElement = document.getElementById(
-      "project-list"
-    )! as HTMLTemplateElement;
-    this.hostElement = document.getElementById("app")! as HTMLDivElement;
-    const importedNode = document.importNode(
-      this.templateElement.content,
-      true
-    );
-    this.element = importedNode.firstElementChild as HTMLElement;
-    this.element.id = `${this.type}-projects`;
-
-    globalStore.subscribe("data_list", (value: Project[]) => {
-      this.assignedProjects = value;
-      this.renderProject();
-    });
-
+    super("project-list", "app", false, `${type}-projects`);
     /**
      *  Register Method for Initial
      */
-    this.attach();
+    this.configure();
     this.renderContent();
   }
-  private attach() {
-    this.hostElement.insertAdjacentElement("beforeend", this.element);
+  configure() {
+    globalStore.subscribe("data_list", (value: Project[]) => {
+      const relevantProject = value.filter(prj => prj.status === this.type);
+      this.assignedProjects = relevantProject;
+      this.renderProject();
+    });
   }
-  private renderProject() {
-    const ulElmn = this.element.querySelector(
-      `#${this.type}-projects-list`
-    )! as HTMLUListElement;
-    for (const project of this.assignedProjects) {
-      const listElm = document.createElement("li");
-      listElm.textContent = project.title;
-      ulElmn.appendChild(listElm);
-    }
-  }
-  private renderContent() {
+  renderContent() {
     const listId = `${this.type}-projects-list`;
     this.element.querySelector("ul")!.id = listId;
     this.element.querySelector(
       "h2"
     )!.textContent = `${this.type} PROJECTS`.toLocaleUpperCase();
+  }
+  private renderProject() {
+    const ulElmn = this.element.querySelector(
+      `#${this.type}-projects-list`
+    )! as HTMLUListElement;
+    ulElmn.textContent = "";
+    for (const project of this.assignedProjects) {
+      const listElm = document.createElement("li");
+      listElm.textContent = project.title;
+      ulElmn.appendChild(listElm);
+    }
   }
 }
 
