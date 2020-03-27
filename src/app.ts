@@ -1,59 +1,13 @@
 /**
- * subscription pattern inside of our state we manage a list of listeners So a list of functions in the end
- * which should be called whenever something changes (It's an array of functions of function references right)
- * ******
- * The idea is that whenever something changes like (body addProject) when we add a new project we call all listener functions
- * ******
- */
-/**
- * Global Store
+ * custom Type
  */
 type subscribeType = {
   [key: string]: Function[];
 };
-class Store {
-  public projects: any[] = [];
-  private static instance: Store;
-  private subscribers: subscribeType = {};
-  private constructor() {}
-
-  static getInstance() {
-    if (this.instance) {
-      return this.instance;
-    }
-    this.instance = new Store();
-    return this.instance;
-  }
-  public subscribe(eventName: string, callback: Function) {
-    if (!Array.isArray(this.subscribers[eventName])) {
-      this.subscribers[eventName] = [];
-    }
-    this.subscribers[eventName].push(callback);
-  }
-  public publish(eventName: string, data: any) {
-    if (!Array.isArray(this.subscribers[eventName])) {
-      return;
-    }
-    for (const callback of this.subscribers[eventName]) {
-      callback(data);
-    }
-  }
-
-  public addProject(title: string, description: string, numOfPeople: number) {
-    const newProject = {
-      id: Math.random().toString(),
-      title: title,
-      description: description,
-      people: numOfPeople
-    };
-    this.projects.push(newProject);
-
-    // feed callback subscribe
-    this.publish("data_list", this.projects.slice());
-  }
+enum ProjectStatus {
+  ACTIVE,
+  FINISHED
 }
-const globalStore = Store.getInstance();
-
 /**
  * Interface
  */
@@ -111,10 +65,78 @@ function validate(validatableInput: Validatable) {
 
   return isValid;
 }
+/**
+ * subscription pattern inside of our state we manage a list of listeners So a list of functions in the end
+ * which should be called whenever something changes (It's an array of functions of function references right)
+ * ******
+ * The idea is that whenever something changes like (body addProject) when we add a new project we call all listener functions
+ * ******
+ */
+/**
+ * Global Store
+ */
+class Store {
+  public projects: Project[] = [];
+  private static instance: Store;
+  private subscribers: subscribeType = {};
+  private constructor() {}
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    this.instance = new Store();
+    return this.instance;
+  }
+  public subscribe(eventName: string, callback: Function) {
+    if (!Array.isArray(this.subscribers[eventName])) {
+      this.subscribers[eventName] = [];
+    }
+    this.subscribers[eventName].push(callback);
+  }
+  public publish<T extends object>(eventName: string, data: T) {
+    if (!Array.isArray(this.subscribers[eventName])) {
+      return;
+    }
+    for (const callback of this.subscribers[eventName]) {
+      callback(data);
+    }
+  }
+
+  public addProject(title: string, description: string, numOfPeople: number) {
+    // const newProject = {
+    //   id: Math.random().toString(),
+    //   title: title,
+    //   description: description,
+    //   people: numOfPeople
+    // };
+    const newProject = new Project(
+      Math.random().toString(),
+      title,
+      description,
+      numOfPeople,
+      ProjectStatus.ACTIVE
+    );
+    this.projects.push(newProject);
+
+    // feed callback subscribe
+    this.publish("data_list", this.projects.slice());
+  }
+}
+const globalStore = Store.getInstance();
 
 /**
  * Class
  */
+class Project {
+  constructor(
+    public id: string,
+    public title: string,
+    public description: string,
+    public people: number,
+    public status: ProjectStatus
+  ) {}
+}
 class ProjectInput {
   /**
    * declare property
@@ -219,7 +241,7 @@ class ProjectList {
   templateElement: HTMLTemplateElement;
   hostElement: HTMLDivElement;
   element: HTMLElement;
-  assignedProjects: any[] = [];
+  assignedProjects: Project[] = [];
 
   constructor(private type: "active" | "finished") {
     /**
@@ -236,7 +258,7 @@ class ProjectList {
     this.element = importedNode.firstElementChild as HTMLElement;
     this.element.id = `${this.type}-projects`;
 
-    globalStore.subscribe("data_list", (value: any[]) => {
+    globalStore.subscribe("data_list", (value: Project[]) => {
       this.assignedProjects = value;
       this.renderProject();
     });
