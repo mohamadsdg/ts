@@ -1,7 +1,7 @@
-import { Component } from "./base-component.js";
-import { autobind as Autobind } from "../decorators/autobind.js";
-import { Draggable } from "../interface/drag-drop.js";
-import { Project } from "../models/project.js";
+import { Component } from "./base-component";
+import { autobind as Autobind } from "../decorators/autobind";
+import { Draggable } from "../interface/drag-drop";
+import { Project } from "models/project";
 
 export class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>
   implements Draggable {
@@ -21,12 +21,12 @@ export class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>
   }
   @Autobind
   dragStartHandler(e: DragEvent) {
-    e.target!.style.opacity = 0.5;
+    // e.target!.style.opacity = 0.5;
     e.dataTransfer!.setData("text/plain", this.projectItem.id);
     e.dataTransfer!.effectAllowed = "move";
   }
-  dragEndHandler(e: DragEvent) {
-    e.target!.style.opacity = 1;
+  dragEndHandler(_: DragEvent) {
+    // e.target!.style.opacity = 1;
     console.log("dragg End");
   }
 
