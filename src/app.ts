@@ -22,3 +22,30 @@ console.log(_.shuffle([1, 2, 3]));
 
 // declare var GLOBAL: string;
 console.log(GLOBAL);
+
+/**
+ * class-transformers
+ * convert data to class
+ */
+import "reflect-metadata";
+import { plainToClass } from "class-transformer";
+
+import { Product } from "./product_model";
+
+// const p1 = new Product("A book", 12.99);
+// console.log(p1);
+
+// pure
+const product = [
+  { title: "A carper", price: 15.99 },
+  { title: "A book", price: 11.99 }
+];
+
+// const loadedProduct = product.map(prod => {
+//   return new Product(prod.title, prod.price);
+// });
+const loadedProduct = plainToClass(Product, product);
+
+for (const prod of loadedProduct) {
+  console.log(prod.getInformation());
+}
