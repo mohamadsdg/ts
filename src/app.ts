@@ -12,3 +12,13 @@
 import _ from "lodash";
 
 console.log(_.shuffle([1, 2, 3]));
+
+/**
+ * use case : some other javascript code without types package !!
+ * variables added to the global
+ * declare certain variables
+ * This basically tells typescript don't worry it will exist
+ */
+
+// declare var GLOBAL: string;
+console.log(GLOBAL);
