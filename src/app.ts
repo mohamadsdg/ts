@@ -49,3 +49,20 @@ const loadedProduct = plainToClass(Product, product);
 for (const prod of loadedProduct) {
   console.log(prod.getInformation());
 }
+
+/**
+ * class-validator
+ * based on decorator
+ */
+import { validate } from "class-validator";
+
+const p1 = new Product("A book", -12.99);
+
+validate(p1).then(errors => {
+  // errors is an array of validation errors
+  if (errors.length > 0) {
+    console.log("validation failed. errors: ", errors);
+  } else {
+    console.log("validation succeed: ", p1);
+  }
+});
