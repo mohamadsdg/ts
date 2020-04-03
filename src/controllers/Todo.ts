@@ -9,10 +9,12 @@ export const createTodo: RequestHandler = (req, res, nex) => {
   TODO.push(newTodo);
   res.status(201).json({ message: "Created the todo.", createdTodo: TODO });
 };
+
 export const getTodo: RequestHandler = (req, res, nex) => {
   res.status(200).json({ todos: TODO });
 };
-export const updateTodo: RequestHandler = (req, res, next) => {
+
+export const updateTodo: RequestHandler<{ id: string }> = (req, res, next) => {
   const todoId = req.params.id;
   const updateText = (req.body as Todo).text;
   const todoIndex = TODO.findIndex(todo => todo.id === todoId);
@@ -20,6 +22,17 @@ export const updateTodo: RequestHandler = (req, res, next) => {
   if (todoIndex < 0) throw new Error("Could not find todo!");
 
   TODO[todoIndex] = new Todo(TODO[todoIndex].id, updateText);
+
+  res.json({ message: "Updated!", updatedTodo: TODO[todoIndex] });
+};
+
+export const deleteTodo: RequestHandler<{ id: string }> = (req, res, next) => {
+  const todoId = req.params.id;
+  const todoIndex = TODO.findIndex(todo => todo.id === todoId);
+
+  if (todoIndex < 0) throw new Error("Could not find todo!");
+
+  TODO.splice(todoIndex, 1);
 
   res.json({ message: "Updated!", updatedTodo: TODO[todoIndex] });
 };
